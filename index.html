@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>日常餐單規劃系統</title>
+    <title>日常餐單規劃系統 v1.5</title>
     <style>
         /* 溫馨家庭風 配色與全局設定 */
         :root {
-            --primary-color: #FF8C00; /* 暖橙色 */
+            --primary-color: #FF8C00;
             --secondary-color: #FFA500;
-            --bg-color: #FFFDF5; /* 淡黃底色 */
+            --bg-color: #FFFDF5;
             --card-bg: #FFFFFF;
-            --text-color: #4A4A4A; /* 深灰文字，降低刺眼感 */
+            --text-color: #4A4A4A;
             --danger-color: #FF6B6B;
             --success-color: #4CAF50;
         }
@@ -23,17 +23,17 @@
             max-width: 800px; 
             margin: 0 auto; 
             padding: 20px; 
-            font-size: 16px; /* 大字體 */
+            font-size: 16px; 
             padding-bottom: 80px;
         }
 
-        h1, h2, h3 { color: #D35400; } /* 標題用深橙色 */
+        h1, h2, h3 { color: #D35400; }
 
         .header { text-align: center; border-bottom: 3px solid var(--primary-color); padding-bottom: 15px; margin-bottom: 25px; }
         .version { font-size: 0.85em; color: #888; margin-top: 5px; }
 
         /* 立體卡片設計 */
-        .controls, .export-section, .day-card, .new-dish-card { 
+        .controls, .export-section, .day-card, .new-dish-card, .custom-dish-card { 
             background: var(--card-bg); 
             padding: 20px; 
             border-radius: 12px; 
@@ -42,44 +42,29 @@
         }
 
         .new-dish-card { border: 2px dashed var(--primary-color); background-color: #FFF8E1; }
+        .custom-dish-card { border: 2px solid #4CAF50; background-color: #F1F8E9; display: none; } /* 預設隱藏 */
 
-        /* 現代化表單元素 (防 iOS 放大) */
         select, input { 
-            padding: 12px; 
-            margin: 5px; 
-            border-radius: 8px; 
-            border: 1px solid #E0E0E0; 
-            font-size: 16px; 
-            background-color: #FAFAFA;
-            transition: all 0.3s ease;
+            padding: 12px; margin: 5px; border-radius: 8px; border: 1px solid #E0E0E0; 
+            font-size: 16px; background-color: #FAFAFA; transition: all 0.3s ease; box-sizing: border-box;
         }
-        select:focus, input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 5px rgba(255, 140, 0, 0.3); }
+        select:focus, input:focus, textarea:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 5px rgba(255, 140, 0, 0.3); }
 
-        /* 動態按鈕 */
         button { 
-            padding: 10px 18px; 
-            margin: 5px;
-            border-radius: 8px; 
-            border: none; 
-            font-size: 16px; 
-            font-weight: bold;
-            background-color: var(--primary-color); 
-            color: white; 
-            cursor: pointer; 
-            transition: transform 0.1s, box-shadow 0.2s; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 10px 18px; margin: 5px; border-radius: 8px; border: none; font-size: 16px; font-weight: bold;
+            background-color: var(--primary-color); color: white; cursor: pointer; 
+            transition: transform 0.1s, box-shadow 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         button:active { transform: translateY(2px); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .btn-danger { background-color: var(--danger-color); color: white;}
         .btn-outline { background-color: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); }
+        .btn-success { background-color: var(--success-color); color: white; }
         
         .alert { background-color: #FFF3E0; color: #E65100; padding: 12px; border-left: 5px solid #FF9800; margin-bottom: 15px; font-weight: bold; border-radius: 6px; }
         
-        /* 每日卡片細節 */
         .day-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #FFF3E0; padding-bottom: 12px; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;}
         .day-title { font-size: 1.3em; font-weight: bold; color: #D35400; }
         
-        /* 手機排版優化 */
         .dish-row { display: flex; align-items: center; margin-bottom: 12px; gap: 8px; }
         .dish-row select { flex: 1.5; min-width: 140px; }
         .dish-row input { flex: 2; min-width: 120px; }
@@ -88,12 +73,13 @@
         @media (max-width: 600px) {
             .dish-row { flex-direction: column; align-items: stretch; background: #fafafa; padding: 10px; border-radius: 8px; border: 1px solid #eee;}
             .dish-row button { margin-top: 5px; }
+            .form-row { display: flex; flex-direction: column; }
+            .form-row input, .form-row select { width: 100%; margin-left: 0; margin-right: 0;}
         }
 
         .nutrition-warning { color: var(--danger-color); font-size: 0.9em; margin-left: 10px; font-weight: normal;}
         textarea { width: 100%; height: 180px; resize: vertical; margin-top: 10px; padding: 12px; border-radius: 8px; border: 1px solid #E0E0E0; font-size: 16px; box-sizing: border-box;}
 
-        /* 優雅氣泡提示 (Toast) */
         #toast {
             visibility: hidden; min-width: 250px; background-color: #333; color: #fff;
             text-align: center; border-radius: 30px; padding: 16px; position: fixed;
@@ -106,12 +92,11 @@
 </head>
 <body>
 
-    <!-- 氣泡提示組件 -->
     <div id="toast">提示訊息</div>
 
     <div class="header">
         <h1>🥘 我的溫馨餐單規劃</h1>
-        <div class="version">系統版本：1.4 | 溫馨家庭風 & 體驗升級版</div>
+        <div class="version">系統版本：1.5 | 新增自訂菜式與食譜功能</div>
     </div>
 
     <!-- 頂部控制台 -->
@@ -131,7 +116,34 @@
         </select>
         <div style="margin-top: 15px;">
             <button onclick="generateMenu()">🎲 重新生成餐單</button>
+            <button class="btn-success" onclick="toggleCustomDishForm()">📝 新增專屬菜式</button>
             <button class="btn-outline" onclick="clearData()">⚠️ 清除記憶</button>
+        </div>
+    </div>
+
+    <!-- 自訂菜式表單 (預設隱藏) -->
+    <div id="customDishSection" class="custom-dish-card">
+        <h3 style="margin-top: 0; color: #2E7D32;">📝 新增專屬菜式至資料庫</h3>
+        <p style="font-size: 0.9em; color: #666; margin-bottom: 15px;">加入後將永久保存，並可於下方菜單的下拉選單中隨時選用。</p>
+        
+        <div class="form-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <input type="text" id="customDishName" placeholder="菜式中文名稱 (必填，如: 麻婆豆腐)" style="flex: 1;">
+            <input type="text" id="customDishEn" placeholder="英文名稱 (給工人看, 必填)" style="flex: 1;">
+        </div>
+        <div class="form-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <select id="customDishCat" style="flex: 1;">
+                <option value="meat">🥩 第1類：肉類</option>
+                <option value="veg">🥬 第2類：蔬菜類</option>
+                <option value="other">🍳 第3類：其他 (魚/蛋/豆腐)</option>
+                <option value="grandma">👵 第4類：婆婆煮</option>
+                <option value="unclassified">🍚 第5類：未分類</option>
+            </select>
+        </div>
+        <textarea id="customDishRecipe" placeholder="簡短食譜、備註或烹飪秘訣 (選填，方便日後參考)" style="height: 80px;"></textarea>
+        
+        <div style="margin-top: 15px; text-align: right;">
+            <button class="btn-outline" onclick="toggleCustomDishForm()">取消</button>
+            <button class="btn-success" onclick="saveCustomDish()">💾 儲存並加入資料庫</button>
         </div>
     </div>
 
@@ -139,12 +151,12 @@
 
     <!-- 本週新菜式推薦 -->
     <div id="newDishSection" class="new-dish-card" style="display:none;">
-        <h3 style="margin-top:0;">💡 本週新菜式挑戰！</h3>
+        <h3 style="margin-top:0;">💡 系統每週新菜式挑戰！</h3>
         <p><strong>🧑‍🍳 菜名：</strong><span id="newDishName"></span></p>
         <p><strong>📖 做法：</strong><span id="newDishRecipe" style="color:#666;"></span></p>
         <div style="margin-top:15px;">
-            <button onclick="acceptNewDish()">✅ 加入本週餐單及恆常庫</button>
-            <button class="btn-danger" onclick="rejectNewDish()">❌ 這次先不要</button>
+            <button onclick="acceptSystemNewDish()">✅ 加入本週餐單及恆常庫</button>
+            <button class="btn-danger" onclick="rejectSystemNewDish()">❌ 這次先不要</button>
         </div>
     </div>
 
@@ -175,19 +187,20 @@
             '外賣': 'Takeaway / Eat Out'
         };
 
-        const newDishesDb = [
+        const systemNewDishesDb = [
             { name: "西蘭花炒帶子", enName: "Stir-fried Scallops with Broccoli", recipe: "帶子出水備用。西蘭花切件飛水。起鑊爆香蒜蓉，加入西蘭花及帶子快炒，加少許鹽調味即成。", category: "other" },
             { name: "南瓜蒸排骨", enName: "Steamed Pork Ribs with Pumpkin", recipe: "排骨用豆豉蒜蓉醃好，鋪在切件的南瓜上，隔水蒸15分鐘。", category: "meat" }
         ];
 
+        // 讀取本地資料
         let database = JSON.parse(localStorage.getItem('myDatabase')) || defaultDatabase;
         let enDict = JSON.parse(localStorage.getItem('myEnDict')) || defaultEnDict;
+        let recipeDict = JSON.parse(localStorage.getItem('myRecipeDict')) || {}; // 新增食譜資料庫
         let currentMenu = JSON.parse(localStorage.getItem('myCurrentMenu')) || [];
-        let currentNewDish = null;
+        let currentSystemDish = null;
 
         const daysOfWeek = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'];
 
-        // 自訂氣泡提示功能 (取代 Alert)
         function showToast(message, color = "#4CAF50") {
             const toast = document.getElementById("toast");
             toast.innerText = message;
@@ -198,49 +211,97 @@
 
         function init() {
             if(currentMenu.length === 0) {
-                generateMenu(false); // 初始不顯示 toast
+                generateMenu(false);
             } else {
                 renderMenu();
             }
 
-            // 隨機抽取本週新菜式
+            // 系統新菜式
             document.getElementById('newDishSection').style.display = 'block';
-            currentNewDish = newDishesDb[Math.floor(Math.random() * newDishesDb.length)];
-            document.getElementById('newDishName').innerText = currentNewDish.name;
-            document.getElementById('newDishRecipe').innerText = currentNewDish.recipe;
+            currentSystemDish = systemNewDishesDb[Math.floor(Math.random() * systemNewDishesDb.length)];
+            document.getElementById('newDishName').innerText = currentSystemDish.name;
+            document.getElementById('newDishRecipe').innerText = currentSystemDish.recipe;
         }
 
         function saveData() {
             localStorage.setItem('myDatabase', JSON.stringify(database));
             localStorage.setItem('myEnDict', JSON.stringify(enDict));
+            localStorage.setItem('myRecipeDict', JSON.stringify(recipeDict));
             localStorage.setItem('myCurrentMenu', JSON.stringify(currentMenu));
         }
 
         function clearData() {
-            if(confirm("確定要清除所有紀錄並回復預設嗎？這將會刪除你目前的餐單。")) {
+            if(confirm("確定要清除所有紀錄並回復預設嗎？這將會刪除你新增的菜式及目前的餐單。")) {
                 localStorage.clear();
                 location.reload();
             }
         }
 
-        function acceptNewDish() {
-            database[currentNewDish.category].push(currentNewDish.name);
-            enDict[currentNewDish.name] = currentNewDish.enName;
+        // --- 自訂菜式邏輯 (v1.5 新增) ---
+        function toggleCustomDishForm() {
+            const form = document.getElementById('customDishSection');
+            form.style.display = form.style.display === 'none' || form.style.display === '' ? 'block' : 'none';
+        }
+
+        function saveCustomDish() {
+            const name = document.getElementById('customDishName').value.trim();
+            const enName = document.getElementById('customDishEn').value.trim();
+            const cat = document.getElementById('customDishCat').value;
+            const recipe = document.getElementById('customDishRecipe').value.trim();
+
+            if(!name || !enName) {
+                showToast("⚠️ 儲存失敗：請務必填寫中英名稱！", "#FF6B6B");
+                return;
+            }
+
+            // 檢查是否已存在
+            let exists = false;
+            for(let key in database) {
+                if(database[key].includes(name)) exists = true;
+            }
+            if(exists) {
+                showToast("⚠️ 此菜式已經存在資料庫中！", "#FF6B6B");
+                return;
+            }
+
+            // 存入對應庫
+            database[cat].push(name);
+            enDict[name] = enName;
+            if(recipe) recipeDict[name] = recipe;
+
+            saveData();
+            renderMenu(); // 重新渲染下拉選單
+
+            // 清空表單並隱藏
+            document.getElementById('customDishName').value = '';
+            document.getElementById('customDishEn').value = '';
+            document.getElementById('customDishRecipe').value = '';
+            toggleCustomDishForm();
             
-            // 隨機加到其中一天的餐單中 (預設星期三)
+            showToast(`✅ 成功新增專屬菜式：「${name}」！`, "#4CAF50");
+        }
+
+        // --- 系統每週推薦邏輯 ---
+        function acceptSystemNewDish() {
+            if(!database[currentSystemDish.category].includes(currentSystemDish.name)) {
+                database[currentSystemDish.category].push(currentSystemDish.name);
+                enDict[currentSystemDish.name] = currentSystemDish.enName;
+                recipeDict[currentSystemDish.name] = currentSystemDish.recipe;
+            }
             if(currentMenu[2]) {
-                currentMenu[2].dishes.push({ name: currentNewDish.name, note: '✨新菜試食' });
+                currentMenu[2].dishes.push({ name: currentSystemDish.name, note: '✨新菜試食' });
             }
             saveData();
             renderMenu();
-            showToast(`已將「${currentNewDish.name}」加入恆常庫並安排在本週三！`, "#FF8C00");
+            showToast(`已將「${currentSystemDish.name}」加入恆常庫！`, "#FF8C00");
             document.getElementById('newDishSection').style.display = 'none';
         }
 
-        function rejectNewDish() {
+        function rejectSystemNewDish() {
             document.getElementById('newDishSection').style.display = 'none';
         }
 
+        // --- 餐單生成與管理 ---
         function getRandomDish(category) {
             const arr = database[category];
             return arr[Math.floor(Math.random() * arr.length)];
@@ -386,7 +447,6 @@
             textarea.select();
             document.execCommand('copy');
             
-            // 彈出優雅氣泡提示
             showToast("✅ 已成功複製！你可以直接去 WhatsApp 貼上了！");
         }
 
